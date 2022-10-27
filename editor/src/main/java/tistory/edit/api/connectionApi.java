@@ -11,29 +11,29 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-//@PropertySource("classpath:application.properties")
-public class connection {
+import tistory.edit.AppConst;
+@Component
+//@Scope(value = "request")
+public class connectionApi {
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
-//	@Value("${tistory.token}")
-	private String token="";
-//	@Value("${tistory.url}")
-	private String baseUrl="https://www.tistory.com/apis/";
 	
 	private String requestType;
-	private JSONObject response;
 	private JSONObject body;
 	private String  serviceUrl;
+	
+	private String access_token;
+	
+	@Autowired 
+	AppConst appConst;
 	
 	public HttpURLConnection getConnection() {
 		HttpURLConnection conn = null;
 		try {
-			log.info(serviceUrl);
+//			log.info(serviceUrl);
 			URL url = new URL(serviceUrl);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(this.requestType); // http 메서드
@@ -46,13 +46,24 @@ public class connection {
 		return conn;
 	}
 
-	@SuppressWarnings("unchecked")
-	public connection(String type, String api) {
+	public void setApiConnection(String type, String api) {
 		this.requestType = type;
-		this.serviceUrl = this.baseUrl+api+"?"
-						+ "access_token="+this.token;
-		log.info("service url : "+this.serviceUrl);
+		this.serviceUrl = appConst.getBaseUrl()
+						+api+"?"
+						+ "access_token="+this.access_token;
+//		log.info("service url : "+this.serviceUrl);
 	}
+	
+	public connectionApi() {
+		
+	}
+//	public connectionApi(String type, String api) {
+//		this.requestType = type;
+//		this.serviceUrl = appConst.getBaseUrl()
+//						+api+"?"
+//						+ "access_token="+this.access_token;
+////		log.info("service url : "+this.serviceUrl);
+//	}
 	
 	public void addUrl(String key, String value) {
 		this.serviceUrl += "&"+key
@@ -62,6 +73,7 @@ public class connection {
 	public JSONObject send() {
 		HttpURLConnection connection = this.getConnection();
 		BufferedWriter bw;
+		JSONObject response = null;
 		try {
 			if("POST".equals(this.requestType)) {
 				bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));

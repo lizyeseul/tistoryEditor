@@ -2,11 +2,11 @@
 	<table>
 		<tr>
 			<th>name</th>
-			<td>${name}</td>
+			<td>${name!}</td>
 		</tr>
 		<tr>
 			<th>secondaryUrl</th>
-			<td>${secondaryUrl}</td>
+			<td>${secondaryUrl!}</td>
 		</tr>
 	</table>
 </div>

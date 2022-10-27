@@ -1,21 +1,26 @@
 package tistory.edit.api;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class blogInfoApi implements tistoryApi {
+public class postListApi implements tistoryApi {
 
-	public static final String resource = "blog/info";
+	public static final String resource = "post/list";
 	@Autowired
 	private connectionApi connect;
 	private JSONObject content;
 	
 	private String output = "json";
 	
-	public blogInfoApi() {
+	private List<String> paramList = Arrays.asList("blogName", "page");
+	
+	public postListApi() {
 	}
 	
 	@Override
@@ -34,6 +39,10 @@ public class blogInfoApi implements tistoryApi {
 			return;
 		}
 		connect.addUrl("output", output);
+		for(Object key :  param.keySet()) {
+			String value = (String) param.get(key);
+			connect.addUrl(key.toString(), value);
+		}
 	}
 
 	@Override

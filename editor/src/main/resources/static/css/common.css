@@ -1,0 +1,65 @@
+body {
+  background: #999;
+  font-family: "Lato", sans-serif;
+}
+
+
+.warpper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.tabs {
+  width:50%;
+  display:table;
+  table-layout: fixed;
+  min-width:500px;
+}
+
+.tab {
+  min-width:120px;
+  cursor: pointer;
+  display : table-cell;
+  color: #fff;
+  text-align: center;
+}
+.tab-label {
+  min-width:120px;
+  padding: 10px;
+  margin: 0px 2px;
+  background: #32557f;
+  display : inline-block;
+  border-radius: 3px 3px 0px 0px;
+  box-shadow: 0 0.5rem 0.8rem #00000080;
+  vertical-align: middle;
+}
+
+.panels {
+  background: #fff;
+  min-height: 300px;
+  width: 90%;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.panel {
+  display: none;
+}
+
+.panel-title {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.radio {
+  display: none;
+}
+
+.checked {
+  background: #fff;
+  color: #000;
+  border-top: 3px solid #32557f;
+}
+

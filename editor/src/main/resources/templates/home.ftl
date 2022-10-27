@@ -1,14 +1,20 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-	<title>home</title>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+	
+	<script type="text/javascript" src="/js/page.js"></script>
+	<script type="text/javascript" src="/js/token.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="/css/common.css">
 </head>
 <body>
-	<div id="tabbar">
-		<div>Home</div>
+	
+	<div class="warpper">
+		<#include "/content.ftl">
 	</div>
-	<div id="main_content">
-		<#include "/read/blogInfo.ftl">
-	</div>
+
+
 </body>
 </html>

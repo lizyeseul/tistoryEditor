@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import tistory.edit.AppConst;
+import tistory.edit.token.Token;
 @Component
 //@Scope(value = "request")
 public class connectionApi {
@@ -25,16 +26,20 @@ public class connectionApi {
 	private JSONObject body;
 	private String  serviceUrl;
 	
-	private String access_token;
-	
 	@Autowired 
 	AppConst appConst;
+	@Autowired 
+	Token token;
+	
+	public connectionApi() {
+		
+	}
 	
 	public HttpURLConnection getConnection() {
 		HttpURLConnection conn = null;
 		try {
 //			log.info(serviceUrl);
-			URL url = new URL(serviceUrl);
+			URL url = new URL(this.serviceUrl);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(this.requestType); // http 메서드
 			conn.setRequestProperty("Content-Type", "application/json"); // header Content-Type 정보
@@ -50,20 +55,16 @@ public class connectionApi {
 		this.requestType = type;
 		this.serviceUrl = appConst.getBaseUrl()
 						+api+"?"
-						+ "access_token="+this.access_token;
+						+ "access_token="+token.getAccess_token();
 //		log.info("service url : "+this.serviceUrl);
 	}
-	
-	public connectionApi() {
-		
+	public connectionApi(String type, String api) {
+		this.requestType = type;
+		this.serviceUrl = appConst.getBaseUrl()
+						+api+"?"
+						+ "access_token="+token.getAccess_token();
+//		log.info("service url : "+this.serviceUrl);
 	}
-//	public connectionApi(String type, String api) {
-//		this.requestType = type;
-//		this.serviceUrl = appConst.getBaseUrl()
-//						+api+"?"
-//						+ "access_token="+this.access_token;
-////		log.info("service url : "+this.serviceUrl);
-//	}
 	
 	public void addUrl(String key, String value) {
 		this.serviceUrl += "&"+key
@@ -90,6 +91,9 @@ public class connectionApi {
 			while((line = br.readLine()) != null) { // 읽을 수 있을 때 까지 반복
 				sb.append(line);
 			}
+			
+			log.info("\nresult : "+sb.toString());
+			
 			JSONParser jsonParser = new JSONParser();
 			response = (JSONObject) jsonParser.parse(sb.toString()); // json으로 변경 (역직렬화)
 		} catch (Exception e) {

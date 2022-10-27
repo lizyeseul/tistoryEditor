@@ -1,9 +1,13 @@
 package tistory.edit.controller;
 
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import tistory.edit.api.postListApi;
@@ -13,11 +17,12 @@ import tistory.edit.service.readService;
 @RequiredArgsConstructor
 @RequestMapping (value = "/**/tistory/api/")
 public class readController {
+	@Autowired
 	private readService readService;
 	
-	@GetMapping("home")
-	public String home(Model model) {
-		return readService.getBlogInfo(model);
+	@GetMapping("getBlogInfo.do")
+	public @ResponseBody Map getBlogInfo() {
+		return readService.getBlogInfo();
 	}
 
 	@GetMapping("post/list")

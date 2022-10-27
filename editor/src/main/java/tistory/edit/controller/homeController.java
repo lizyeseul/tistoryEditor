@@ -17,7 +17,6 @@ public class homeController {
 	
 	@GetMapping("/")
 	public String home(Model model) {
-		model.addAttribute("token_valid", token.getToken_valid());
 		return "home";
 	}
 }

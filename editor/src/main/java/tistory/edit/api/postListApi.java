@@ -25,6 +25,7 @@ public class postListApi implements tistoryApi {
 	
 	@Override
 	public void setConnection() {
+//		this.connect = new connectionApi("GET", resource);
 		connect.setApiConnection("GET", resource);
 	}
 	

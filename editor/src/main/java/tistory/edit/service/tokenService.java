@@ -12,11 +12,14 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.util.Strings;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import tistory.edit.AppConst;
+import tistory.edit.token.Token;
 
 @Service
 public class tokenService {
@@ -28,6 +31,10 @@ public class tokenService {
 	
 	@Autowired
 	private AppConst tistoryConst;
+	@Autowired
+	Token token;
+
+	private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	private String getTokenCodeUrl() {
 		this.client_id = tistoryConst.getClientId();
@@ -71,23 +78,33 @@ public class tokenService {
 		return requestUrl;
 	}
 	
-	public Map getAccessToken(Map param) {
-		String url = (String) param.get("url");
-		if(url == null) {
-			return new HashMap<>();
-		}
+	private String extractCode(String param) {
 		String code = "";
 		Pattern pattern = Pattern.compile("code=([^&]*)");
-		Matcher matcher = pattern.matcher(url);
+		Matcher matcher = pattern.matcher(param);
 		if (matcher.find())
 		{
 			code = matcher.group(1);
 		}
+		return code;
+	}
+	
+	public Map getAccessToken(Map param) {
+		Map<String, Object> result = new HashMap<>();
+		if(token.getToken_valid() == true) {
+			result.put("access_token", token.getAccess_token());
+			result.put("token_valid", token.getToken_valid());
+			return result;
+		}
 		
+		String url = (String) param.get("url");
+		if(url == null) {
+			return new HashMap<>();
+		}
+		String code = extractCode(url);
+
 		HttpURLConnection conn = null;
-		JSONObject response = null;
 		try {
-//			log.info(serviceUrl);
 			URL getTokenUrl = new URL(getAccessTokenUrl(code));
 			conn = (HttpURLConnection) getTokenUrl.openConnection();
 			conn.setRequestMethod("GET"); // http 메서드
@@ -97,21 +114,40 @@ public class tokenService {
 
 			// 토큰 시간
 			
-			
-			// 서버로부터 데이터 읽어오기
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-			
-			while((line = br.readLine()) != null) { // 읽을 수 있을 때 까지 반복
-				sb.append(line);
+			if(conn.getResponseCode() == 200) {
+				// 서버로부터 데이터 읽어오기
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				String line = null;
+				
+				while((line = br.readLine()) != null) { // 읽을 수 있을 때 까지 반복
+					sb.append(line);
+				}
+
+				String access_token = "";
+				Pattern pattern = Pattern.compile("access_token=([^&]*)");
+				Matcher matcher = pattern.matcher(sb.toString());
+				if (matcher.find())
+				{
+					access_token = matcher.group(1);
+				}
+				log.info("\naccess_token : "+access_token);
+				token.setAccess_token(access_token);
+				token.setToken_valid(true);
 			}
-			JSONParser jsonParser = new JSONParser();
-			response = (JSONObject) jsonParser.parse(sb.toString()); // json으로 변경 (역직렬화)
+			else {
+				token.setToken_valid(false);
+			}
+
+//			token.setAccess_token("c8b4389e06653bfb631f89189683c128_7e013a3472851e068233a2ecd1dd6e5e");
+//			token.setToken_valid(true);
+			
+			result.put("access_token", token.getAccess_token());
+			result.put("token_valid", token.getToken_valid());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return response;
+
+		return result;
 	}
 }

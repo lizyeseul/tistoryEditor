@@ -1,3 +1,5 @@
+<input id="token_valid_input" type="checkbox" onchange = "onChangeTokenValid(this)" hidden/>
+
 <table>
 	<tr>
 		<td>토큰</td>
@@ -13,14 +15,14 @@
 		<td><input type="text" id="response_code" style="width:100%;"></input></td>
 	</tr>
 	<tr>
-		<td><button on-click="requestToken()">토큰 요청</button></td>
+		<td><button onclick="requestToken()">토큰 요청</button></td>
 	</tr>
 </table>
 
 <table id="token_info" style="display:none;">
 	<tr>
 		<th>access_token</th>
-		<td>${access_token!}</td>
+		<td><label id="access_token_label"></label></td>
 	</tr>
 	<tr>
 		<th>토큰 발급시간</th>

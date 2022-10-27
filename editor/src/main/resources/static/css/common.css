@@ -34,6 +34,7 @@ body {
   border-radius: 3px 3px 0px 0px;
   box-shadow: 0 0.5rem 0.8rem #00000080;
   vertical-align: middle;
+  border-top: 3px solid #32557f;
 }
 
 .panels {
@@ -57,9 +58,13 @@ body {
   display: none;
 }
 
-.checked {
+.tab-selected {
   background: #fff;
   color: #000;
-  border-top: 3px solid #32557f;
+}
+
+.tab-disabled {
+  background: #666;
+  color: #444;
 }
 

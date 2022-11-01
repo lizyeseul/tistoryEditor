@@ -1,4 +1,4 @@
-var token_valid = false;
+
 
 
 function getTokenValid() {

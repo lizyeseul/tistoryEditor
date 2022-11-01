@@ -17,7 +17,7 @@ public class LogBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName)throws BeansException {
-        log.info(String.format("Bean instantiated with name %s and class %s", beanName, bean.getClass().getSimpleName()));
+//        log.info(String.format("Bean instantiated with name %s and class %s", beanName, bean.getClass().getSimpleName()));
         return bean;
     }
 }

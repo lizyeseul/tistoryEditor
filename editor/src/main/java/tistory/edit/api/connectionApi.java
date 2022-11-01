@@ -25,6 +25,7 @@ public class connectionApi {
 	private String requestType;
 	private JSONObject body;
 	private String  serviceUrl;
+	private String  urlParam;
 	
 	@Autowired 
 	AppConst appConst;
@@ -38,8 +39,8 @@ public class connectionApi {
 	public HttpURLConnection getConnection() {
 		HttpURLConnection conn = null;
 		try {
-//			log.info(serviceUrl);
-			URL url = new URL(this.serviceUrl);
+			log.info("\nurl   : "+this.serviceUrl+this.urlParam);
+			URL url = new URL(this.serviceUrl+this.urlParam);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(this.requestType); // http 메서드
 			conn.setRequestProperty("Content-Type", "application/json"); // header Content-Type 정보
@@ -50,28 +51,21 @@ public class connectionApi {
 		}
 		return conn;
 	}
+	
+	public JSONObject getContent(String type, String api, String param) {
+		setApiConnection(type, api, param);
+		return send();
+	}
 
-	public void setApiConnection(String type, String api) {
+	private void setApiConnection(String type, String api, String param) {
 		this.requestType = type;
 		this.serviceUrl = appConst.getBaseUrl()
 						+api+"?"
 						+ "access_token="+token.getAccess_token();
-//		log.info("service url : "+this.serviceUrl);
-	}
-	public connectionApi(String type, String api) {
-		this.requestType = type;
-		this.serviceUrl = appConst.getBaseUrl()
-						+api+"?"
-						+ "access_token="+token.getAccess_token();
-//		log.info("service url : "+this.serviceUrl);
+		this.urlParam = param;
 	}
 	
-	public void addUrl(String key, String value) {
-		this.serviceUrl += "&"+key
-						+  "="+value;
-	}
-	
-	public JSONObject send() {
+	private JSONObject send() {
 		HttpURLConnection connection = this.getConnection();
 		BufferedWriter bw;
 		JSONObject response = null;

@@ -3,10 +3,13 @@
 		<label class="tab-label" id="token-tab">토큰</label>
 	</div>
 	<div class="tab">
-		<label class="tab-label" id="info-tab" for="two">블로그 정보</label>
+		<label class="tab-label" id="info-tab">블로그 정보</label>
 	</div>
 	<div class="tab">
-		<label class="tab-label" id="list-tab" for="three">글 목록</label>
+		<label class="tab-label" id="list-tab">글 목록</label>
+	</div>
+	<div class="tab">
+		<label class="tab-label" id="read-tab">글 읽기</label>
 	</div>
 </div>
 
@@ -18,8 +21,10 @@
 		<#include "/read/blogInfo.ftl">
 	</div>
 	<div class="panel" id="list-panel">
-		<div class="panel-title">Title3</div>
-		<p>Content3</p>
+		<#include "/read/postList.ftl">
+	</div>
+	<div class="panel" id="read-panel">
+		<#include "/read/postRead.ftl">
 	</div>
 </div>
 

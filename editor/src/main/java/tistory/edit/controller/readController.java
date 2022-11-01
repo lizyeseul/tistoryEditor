@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
@@ -25,14 +27,13 @@ public class readController {
 		return readService.getBlogInfo();
 	}
 
-	@GetMapping("post/list")
-	//http://localhost:8080/tistory/apitest/home
-	public String postList(Model model) {
-		postListApi api = new postListApi();
-		api.makeBody(null);
-		api.getContent();
-		model.addAttribute("name", api.getName());
-		model.addAttribute("secondaryUrl", api.getUrl());
-		return "home";
+	@RequestMapping(value = "getPostList.do", method = {RequestMethod.POST})
+	public @ResponseBody Map getPostList(@RequestBody Map param) {
+		return readService.getPostList(param);
+	}
+
+	@RequestMapping(value = "getPostDetail.do", method = {RequestMethod.POST})
+	public @ResponseBody Map getPostDetail(@RequestBody Map param) {
+		return readService.getPostDetail(param);
 	}
 }

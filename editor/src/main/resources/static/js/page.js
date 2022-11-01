@@ -1,3 +1,16 @@
+
+
+/**
+ready
+ */
+$(document).ready(function() {
+	$("select").niceSelect();
+	getTokenValid()
+//	$("#token-tab").trigger("click")
+	$("#info-tab").trigger("click")
+//	$("#list-tab").trigger("click")
+})
+
 /**
 탭 이동 css
  */
@@ -10,6 +23,7 @@ function onTabClick(event) {
 		$("#"+tabId).addClass("tab-selected")
 		$(".panel").hide()
 		$("#"+panelId).show()
+		onLoadPage(panelId)
 	}
 	else {
 		//disabled 상태
@@ -28,10 +42,44 @@ function onEnableTab() {
 	}
 }
 
+
 /**
-ready
+page load
  */
-$(document).ready(function() {
-	getTokenValid()
-	$("#one").trigger("click")
-})
+function onLoadPage(panelId) {
+	if(panelId == "info-panel") {
+		if(selectedBlogName == "") {
+			requestBlogInfo();
+		}
+	}
+	else if(panelId == "list-panel") {
+		if(selectedBlogName == "") {
+			alert("블로그 정보 조회 필요");
+			$("#info-tab").trigger("click")
+			return;
+		}
+		onSetPostInfo()
+		
+		if(posts.length == 0) {
+			requestPostList()
+		}
+	}
+	else if(panelId == "read-panel") {
+		if(selectedBlogName == "") {
+			alert("블로그 정보 조회 필요");
+			$("#info-tab").trigger("click")
+			return;
+		}
+		else if(selectedPostId == -1) {
+			alert("게시글 정보 조회 필요");
+			$("#list-tab").trigger("click")
+			return;
+		}
+		onSetPostInfo()
+	}
+}
+
+
+
+
+

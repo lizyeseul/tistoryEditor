@@ -1,66 +1,95 @@
 package tistory.edit.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.collections4.MapUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
-public class blogInfoApi implements tistoryApi {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-	public static final String resource = "blog/info";
+@Component
+@SuppressWarnings({"unchecked","rawtypes"})
+public class blogInfoApi implements tistoryApi {
 	@Autowired
 	private connectionApi connect;
-	private JSONObject content;
+	@Autowired 
+	apiUtils apiUtils;
+
+	public static final String resource = "blog/info";
+	private Boolean hasContent = false;
 	
-	private String output = "json";
+	private JSONObject responseBody;
+	private Map<String, String> param = new HashMap<>();
+	
+	private Map<String, Object> blogList = new HashMap<>();
+	private String defaultBlogName;
 	
 	public blogInfoApi() {
+		param.put("output", "json");
 	}
 	
 	@Override
-	public void setConnection() {
-//		this.connect = new connectionApi("GET", resource);
-		connect.setApiConnection("GET", resource);
-	}
-	
-	@Override
-	public Boolean validateParam(JSONObject param) { //파라미터 없음
+	public Boolean setContent(Map parameter) {
+		if(hasContent == false) {
+			responseBody = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
+			hasContent = parseContent();
+		}
 		return true;
 	}
-
-	@Override
-	public void makeBody(JSONObject param) {
-		if(!validateParam(param)) {
-			return;
-		}
-		connect.addUrl("output", output);
-	}
-
-	@Override
-	public void getContent() {
-		content = connect.send();
-		return;
-	}
 	
-	public JSONObject getFirstBlog() {
-		JSONObject main = this.content;
+	
+	private Boolean parseContent() {
+		JSONObject main = this.responseBody;
 		JSONObject tistory = (JSONObject) main.get("tistory");
 		JSONObject item = (JSONObject) tistory.get("item");
 		JSONArray blogs = (JSONArray) item.get("blogs");
-		if(blogs.isEmpty()) {
+		for(Object blog : blogs) {
+			Map<String, Object> b = parseBlog((JSONObject)blog);
+			blogList.put(MapUtils.getString(b, "name"), b);
+			if("Y".equals(MapUtils.getString(b, "default", ""))) {
+				defaultBlogName = MapUtils.getString(b, "name");
+			}
+		}
+		if(blogList.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	private Map<String, Object> parseBlog(JSONObject blog) {
+		Map<String, Object> content = null;
+		try {
+			content = new ObjectMapper().readValue(blog.toJSONString(), Map.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Map<String, Object> stat = (Map<String, Object>) MapUtils.getMap(content, "statistics");
+		content.put("post", MapUtils.getInteger(stat, "post", 0));
+		content.put("post", MapUtils.getInteger(stat, "comment", 0));
+		content.put("post", MapUtils.getInteger(stat, "trackback", 0));
+		content.put("post", MapUtils.getInteger(stat, "guestbook", 0));
+		content.put("post", MapUtils.getInteger(stat, "invitation", 0));
+		return content;
+	}
+
+
+	public Map getBlogList() {
+		return blogList;
+	}
+
+	public String getDefaultBlogName() {
+		return defaultBlogName;
+	}
+	
+	public Map getDefaultBlogInfo() {
+		if(defaultBlogName == null) {
 			return null;
 		}
-		return (JSONObject) blogs.get(0);
-	}
-	
-	public String getUrl() {
-		JSONObject blog = getFirstBlog();
-		return (String) blog.get("url");
-	}
-	
-	public String getName() {
-		JSONObject blog = getFirstBlog();
-		return (String) blog.get("name");
+		return MapUtils.getMap(blogList, defaultBlogName);
 	}
 }

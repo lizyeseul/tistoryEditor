@@ -13,7 +13,7 @@ html {
 	height : 100%;
 }
 body {
-  height : 100%;
+  height: calc(100% - 8px);
   background: var(--greyLv3);
   font-family: "Lato", sans-serif;
 }
@@ -68,7 +68,7 @@ body {
   background: var(--white);
   min-height: 300px;
   width: 90%;
-  overflow: hidden;
+  overflow: scroll;
   padding: 20px;
   height : 80%;
 }

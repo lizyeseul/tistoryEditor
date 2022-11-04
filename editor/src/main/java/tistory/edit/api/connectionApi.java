@@ -86,7 +86,7 @@ public class connectionApi {
 				sb.append(line);
 			}
 			
-			log.info("\nresult : "+sb.toString());
+//			log.info("\nresult : "+sb.toString());
 			
 			JSONParser jsonParser = new JSONParser();
 			response = (JSONObject) jsonParser.parse(sb.toString()); // json으로 변경 (역직렬화)

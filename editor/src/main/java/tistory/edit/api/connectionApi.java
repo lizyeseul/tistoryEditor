@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import tistory.edit.AppConst;
+import tistory.edit.config.AppConst;
 import tistory.edit.token.Token;
 @Component
 //@Scope(value = "request")

@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import tistory.edit.AppConst;
+import tistory.edit.config.AppConst;
 import tistory.edit.token.Token;
 
 @Service

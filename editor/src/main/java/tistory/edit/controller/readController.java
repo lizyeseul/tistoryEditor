@@ -1,5 +1,6 @@
 package tistory.edit.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,10 @@ public class readController {
 	@RequestMapping(value = "getPostDetail.do", method = {RequestMethod.POST})
 	public @ResponseBody Map getPostDetail(@RequestBody Map param) {
 		return readService.getPostDetail(param);
+	}
+	
+	@GetMapping("dbTest.do")
+	public @ResponseBody List doDBTest() {
+		return readService.doDBTest();
 	}
 }

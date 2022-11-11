@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ctgy-list">
+
+	<delete id="deleteCtgys">
+	/*deleteCtgys*/
+	DELETE FROM category_list
+	WHERE BLOG_UUID = #{blog_uuid}
+	</delete>
+	<insert id="insertCategory">
+	/*insertCategory*/
+	INSERT INTO category_list
+	(
+		CTGY_UUID,
+		CTGY_ID,
+		BLOG_UUID,
+		CTGY_NM,
+		UP_CTGY_ID,
+		CTGY_PATH,
+		POST_CNT
+	) VALUES (
+		#{ctgy_uuid},
+		#{id},
+		#{blog_uuid},
+		#{name},
+		#{parent},
+		#{label},
+		#{entries}
+	)
+	</insert>
+</mapper>

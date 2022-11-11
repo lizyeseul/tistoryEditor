@@ -1,9 +1,12 @@
 package tistory.edit.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +21,13 @@ public class blogInfoApi implements tistoryApi {
 	private connectionApi connect;
 	@Autowired 
 	apiUtils apiUtils;
+	@Autowired
+	private SqlSession sqlSession;
 
 	public static final String resource = "blog/info";
-	private Boolean hasContent = false;
+	public static final String NAMESPACE = "blog-list";
 	
-	private JSONObject responseBody;
 	private Map<String, String> param = new HashMap<>();
-	
-	private Map<String, Object> blogList = new HashMap<>();
-	private String defaultBlogName;
 	
 	public blogInfoApi() {
 		param.put("output", "json");
@@ -34,30 +35,16 @@ public class blogInfoApi implements tistoryApi {
 	
 	@Override
 	public Boolean setContent(Map parameter) {
-		if(hasContent == false) {
-			responseBody = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
-			hasContent = parseContent();
-		}
-		return true;
-	}
-	
-	
-	private Boolean parseContent() {
-		JSONObject main = this.responseBody;
+		sqlSession.delete(NAMESPACE+".deleteBlogs");
+		
+		JSONObject main = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
 		JSONObject tistory = (JSONObject) main.get("tistory");
 		JSONObject item = (JSONObject) tistory.get("item");
 		JSONArray blogs = (JSONArray) item.get("blogs");
 		for(Object blog : blogs) {
-			Map<String, Object> b = parseBlog((JSONObject)blog);
-			blogList.put(MapUtils.getString(b, "name"), b);
-			if("Y".equals(MapUtils.getString(b, "default", ""))) {
-				defaultBlogName = MapUtils.getString(b, "name");
-			}
+			sqlSession.insert(NAMESPACE+".insertBlogList", parseBlog((JSONObject)blog));
 		}
-		if(blogList.size() > 0) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 	
 	private Map<String, Object> parseBlog(JSONObject blog) {
@@ -67,29 +54,8 @@ public class blogInfoApi implements tistoryApi {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		Map<String, Object> stat = (Map<String, Object>) MapUtils.getMap(content, "statistics");
-		content.put("post", MapUtils.getInteger(stat, "post", 0));
-		content.put("post", MapUtils.getInteger(stat, "comment", 0));
-		content.put("post", MapUtils.getInteger(stat, "trackback", 0));
-		content.put("post", MapUtils.getInteger(stat, "guestbook", 0));
-		content.put("post", MapUtils.getInteger(stat, "invitation", 0));
+		content.put("blog_uuid", UUID.randomUUID().toString());
+		content.putAll((Map<String, Object>) MapUtils.getMap(content, "statistics"));
 		return content;
-	}
-
-
-	public Map getBlogList() {
-		return blogList;
-	}
-
-	public String getDefaultBlogName() {
-		return defaultBlogName;
-	}
-	
-	public Map getDefaultBlogInfo() {
-		if(defaultBlogName == null) {
-			return null;
-		}
-		return MapUtils.getMap(blogList, defaultBlogName);
 	}
 }

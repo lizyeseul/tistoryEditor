@@ -1,12 +1,13 @@
 package tistory.edit.api;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.ibatis.session.SqlSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +27,14 @@ public class postListApi implements tistoryApi {
 	private connectionApi connect;
 	@Autowired 
 	apiUtils apiUtils;
+	@Autowired
+	private SqlSession sqlSession;
 
 	public static final String resource = "post/list";
-	private Boolean hasContent = false;
-	private List<String> paramList = Arrays.asList("blogName", "page");
+	public static final String NAMESPACE = "post-list";
+	private List<String> paramList = Arrays.asList("blogName");
 	
-	private JSONObject responseBody;
 	private Map<String, String> param = new HashMap<>();
-	
-	private List<Map<String, Object>> postList = new ArrayList();
-	private int page, count, totalCount, totalPage;
-	
 	
 	public postListApi() {
 		param.put("output", "json");
@@ -44,57 +42,48 @@ public class postListApi implements tistoryApi {
 	
 	@Override
 	public Boolean setContent(Map parameter) {
-		if(MapUtils.getIntValue(parameter, "page") != this.getPage()) {
-			hasContent = false;
+		parameter.put("blogName", sqlSession.selectOne("blog-list.selectBlogNm", parameter));
+		if(apiUtils.validParam(paramList, parameter) == false) {
+			return false;
 		}
-		if(hasContent == false) {
-			if(apiUtils.validParam(paramList, parameter) == false) {
-				return false;
-			}
-			else {
-				param.putAll(parameter);
-				this.setPage(MapUtils.getIntValue(parameter, "page"));
-				
-			}
-			responseBody = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
-			hasContent = parseContent();
+		else {
+			apiUtils.addParam(paramList, this.param, parameter);
+		}
+		sqlSession.delete(NAMESPACE+".deletePosts", parameter);
+
+		param.put("page", Integer.toString(1));
+		JSONObject main = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
+		JSONObject tistory = (JSONObject) main.get("tistory");
+		JSONObject item = (JSONObject) tistory.get("item");
+		
+		int count = MapUtils.getIntValue(item, "count");
+		int totalCount = MapUtils.getIntValue(item, "totalCount");
+		int totalPage = (totalCount-1) / count + 1; 
+		insertPost(item,parameter);
+		
+		for(int i=2; i<=totalPage; i++) {
+			param.put("page", Integer.toString(i));
+			main = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
+			tistory = (JSONObject) main.get("tistory");
+			item = (JSONObject) tistory.get("item");
+			insertPost(item, parameter);
 		}
 		return true;
 	}
-
-	private Boolean parseContent() {
-		JSONObject main = this.responseBody;
-		JSONObject tistory = (JSONObject) main.get("tistory");
-		JSONObject item = (JSONObject) tistory.get("item");
-		if(MapUtils.getIntValue(item, "page") != this.getPage()) {
-			return false;
-		}
-		this.setCount(MapUtils.getIntValue(item, "count"));
-		this.setTotalCount(MapUtils.getIntValue(item, "totalCount"));
-		int tp = this.getTotalCount() / this.getCount(); 
-		if(this.getTotalCount() % this.getCount() != 0) {
-			tp ++;
-		}
-		this.setTotalPage(tp);
-		
-		JSONArray posts = (JSONArray) item.get("posts");
-		postList.clear();
-		for(Object post : posts) {
-			postList.add(parsePost((JSONObject)post));
-		}
-		if(postList.size() > 0) {
-			return true;
-		}
-		return false;
-	}
 	
-	private Map<String, Object> parsePost(JSONObject post) {
-		Map<String, Object> content = null;
-		try {
-			content = new ObjectMapper().readValue(post.toJSONString(), Map.class);
-		} catch (Exception e) {
-			e.printStackTrace();
+	private void insertPost(JSONObject item, Map parameter) {
+		JSONArray posts = (JSONArray) item.get("posts");
+		for(Object post : posts) {
+			JSONObject tempPost = (JSONObject)post;
+			Map<String, Object> content = null;
+			try {
+				content = new ObjectMapper().readValue(tempPost.toJSONString(), Map.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			content.put("post_uuid", UUID.randomUUID().toString());
+			content.put("blog_uuid", MapUtils.getString(parameter, "blog_uuid"));
+			sqlSession.insert(NAMESPACE+".insertPost", content);
 		}
-		return content;
 	}
 }

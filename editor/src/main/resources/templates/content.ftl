@@ -1,3 +1,8 @@
+<input type="text"   name="global" id="token_valid"        value="false" hidden/>
+<input type="text"   name="global" id="selected-blog-uuid" value=""      hidden/>
+<input type="number" name="global" id="selected-page"      value="1"     hidden/>
+<input type="number" name="global" id="selected-post-uuid" value="-1"    hidden/>
+
 <div class="tabs">
 	<div class="tab">
 		<label class="tab-label" id="token-tab">토큰</label>

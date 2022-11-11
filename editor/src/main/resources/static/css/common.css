@@ -26,6 +26,24 @@ body {
   height: 100%;
 }
 
+.refresh-btn {
+	background: var(--blueMain);
+	width: 40px;
+	height: 40px;
+	position: fixed;
+	left: 80px;
+	top: -5px;
+	border-radius: 5px;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	color: var(--white);
+}
+
+.refresh-btn:hover {
+	cursor: pointer;
+}
+
 .tabs {
   width:50%;
   display:table;
@@ -35,7 +53,6 @@ body {
 
 .tab {
   min-width:120px;
-  cursor: pointer;
   display : table-cell;
   color: var(--white);
   text-align: center;
@@ -51,6 +68,10 @@ body {
   box-shadow: 0 0.5rem 0.8rem #00000080;
   vertical-align: middle;
   border-top: 3px solid var(--blueMain);
+}
+
+.tab-label:hover:not(.tab-disabled) {
+	cursor: pointer;
 }
 
 

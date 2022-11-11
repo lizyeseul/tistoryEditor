@@ -10,16 +10,10 @@ function getTokenValid() {
 	    contentType: "application/json"
 	})
 	.done(function(data) {
-		onSetTokenValid(data.token_valid)
+		$("#token_valid").val(data.token_valid.toString()).trigger("change");
 	})
 }
 
-
-
-function onSetTokenValid(valid) {
-	token_valid = valid;
-	onEnableTab()
-}
 
 function requestAuthCode() {
 	$.ajax({
@@ -47,8 +41,8 @@ function requestToken() {
 	    data: JSON.stringify(body)
 	})
 	.done(function(data) {
-	    onSetTokenValid(data.token_valid);
-	    if(token_valid) {
+		$("#token_valid").val(data.token_valid.toString()).trigger("change");
+	    if(data.token_valid == "true") {
 		    $("#code_form").hide();
 		    $("#token_info").show();
 			$("#access_token_label").text(data.access_token);

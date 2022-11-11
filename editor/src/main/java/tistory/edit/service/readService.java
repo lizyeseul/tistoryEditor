@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,31 +14,26 @@ import tistory.edit.api.postListApi;
 import tistory.edit.api.postReadApi;
 
 @Service
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes","unchecked"})
 public class readService {
 	@Autowired
-	blogInfoApi blogInfoApi;
-	public Map getBlogInfo() {
-		Map<String, Object> param = new HashMap<String, Object>();
-		blogInfoApi.setContent(null);
-		param.put("blogMap", blogInfoApi.getBlogList());
-		param.put("defaultBlogName", blogInfoApi.getDefaultBlogName());
-		return param;
+	private SqlSession sqlSession;
+	
+	public static final String NAMESPACE_BLOG = "blog-list";
+	public static final String NAMESPACE_POST = "post-list.";
+	
+	public List getBlogList() {
+		return (List) sqlSession.selectList(NAMESPACE_BLOG+".selectBlogList");
+	}
+	public Map getBlogInfo(Map param) {
+		return sqlSession.selectOne(NAMESPACE_BLOG+".selectBlogInfo", param);
 	}
 	
-	@Autowired
-	postListApi postListApi;
 	public Map getPostList(Map param) {
 		Map<String, Object> response = new HashMap<String, Object>();
-		Boolean valid = postListApi.setContent(param);
-		if(valid == false) {
-			response.put("response_result", "E");
-			return response;
-		}
-		response.put("postList", postListApi.getPostList());
-		response.put("count", postListApi.getCount());
-		response.put("totalCount", postListApi.getTotalCount());
-		response.put("totalPage", postListApi.getTotalPage());
+		List postList = sqlSession.selectList(NAMESPACE_POST+"selectPostList", param);
+		response.put("postList", postList);
+		response.put("totalPage", (postList.size()-1) / MapUtils.getIntValue(param, "post_per_page", 1) +1);
 		return response;
 	}
 	
@@ -55,13 +51,5 @@ public class readService {
 		response.put("categoryId", postReadApi.getCategoryId());
 		response.put("date", postReadApi.getDate());
 		return response;
-	}
-	
-	@Autowired
-	private SqlSession sqlSession;
-	public List doDBTest() {
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("blog_uuid", "test");
-		return (List) sqlSession.selectList("blog-info.getBlogList", param);
 	}
 }

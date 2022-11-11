@@ -26,4 +26,11 @@ public class apiUtils {
 		}
 		return true;
 	}
+	
+	public Map addParam(List<String> paramList, Map<String, String> baseParam, Map<String, String> addParam) {
+		for(String p : paramList) {
+			baseParam.put(p, MapUtils.getString(addParam, p, ""));
+		}
+		return baseParam;
+	}
 }

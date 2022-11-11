@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
-import tistory.edit.api.postListApi;
 import tistory.edit.service.readService;
 
 @Controller
@@ -23,9 +21,14 @@ public class readController {
 	@Autowired
 	private readService readService;
 	
-	@GetMapping("getBlogInfo.do")
-	public @ResponseBody Map getBlogInfo() {
-		return readService.getBlogInfo();
+	@GetMapping("getBlogList.do")
+	public @ResponseBody List getBlogList() {
+		return readService.getBlogList();
+	}
+	
+	@RequestMapping(value = "getBlogInfo.do", method = {RequestMethod.POST})
+	public @ResponseBody Map getBlogInfo(@RequestBody Map param) {
+		return readService.getBlogInfo(param);
 	}
 
 	@RequestMapping(value = "getPostList.do", method = {RequestMethod.POST})
@@ -36,10 +39,5 @@ public class readController {
 	@RequestMapping(value = "getPostDetail.do", method = {RequestMethod.POST})
 	public @ResponseBody Map getPostDetail(@RequestBody Map param) {
 		return readService.getPostDetail(param);
-	}
-	
-	@GetMapping("dbTest.do")
-	public @ResponseBody List doDBTest() {
-		return readService.doDBTest();
 	}
 }

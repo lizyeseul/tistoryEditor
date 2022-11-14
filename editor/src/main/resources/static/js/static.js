@@ -33,7 +33,7 @@ function setPostList(posts) {
 	for(var p in posts) {
 //		$("#postListTBody").append(makePostListTr(posts[p]));
 		
-		var postListTr = "<tr>";
+		var postListTr = "<tr post-uuid="+posts[p]["POST_UUID"]+">";
 		postListTr += '<td class="post-id">'+posts[p]["POST_ID"]+"</td>";
 		postListTr += "<td>"+posts[p]["POST_NM"]+"</td>";
 		postListTr += '<td style="text-align:center;">'+posts[p]["POST_DT"]+"</td>";
@@ -44,23 +44,8 @@ function setPostList(posts) {
 	}
 }
 function onSetPostId(event) {
-	$("#selected-post-uuid").val( $(event.target).text() ).trigger("change");
-	onSetPostInfo();
-}
-
-function onSetPostInfo() {
-	$("td[name=header-blog]").text( $("#blogList_select option:selected").val() );
-	
-	var selectedPostId = $("#selected-post-uuid").val();
-	if(selectedPostId != -1) {
-		var post = {};
-		for(var i in posts) {
-			if(posts[i]["id"] == selectedPostId) {
-				post = posts[i];
-				break;
-			}
-		}
-		$("td[name=header-post-id]").text(post["id"]);
-		$("td[name=header-post-title]").text(post["title"]);
-	}
+	var $postTr = $(event.target)[0].parentNode;
+	$("#selected-post-uuid").val( $($postTr).attr("post-uuid") ).trigger("change");
+	$("td[name=header-post-id]").text( $($postTr.children[0]).text());
+	$("td[name=header-post-title]").text($($postTr.children[1]).text());
 }

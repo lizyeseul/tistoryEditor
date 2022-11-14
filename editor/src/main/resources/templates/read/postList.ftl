@@ -1,15 +1,13 @@
 <div class="header-container">
 	<button onclick="requestPostList()">조회</button>
 	<table class="header-info">
-		<colgroup>
-			<col style="width:60px;"/>
-			<col/>
-		</colgroup>
-		<tr><td name="header-blog" colspan="2"></td></tr>
-		<tr>
-			<td name="header-post-id"></td>
-			<td name="header-post-title"></td>
-		</tr>
+<!-- 		<colgroup> -->
+<!-- 			<col style="width:60px;"/> -->
+<!-- 			<col/> -->
+<!-- 		</colgroup> -->
+		
+		<tr><td name="header-blog"></td></tr>
+		<tr><td ><select class="wide" id="ctgy_select"></select></td></tr>
 	</table>
 </div>
 

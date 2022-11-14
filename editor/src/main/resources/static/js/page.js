@@ -31,16 +31,18 @@ function onTabClick(event) {
 		getTokenValid()
 	}
 	else if(tabId == "info-tab") {
-		requestBlogList();
+		if($("#blogList_select option").length <= 0) {
+			requestBlogList();
+		}
 	}
 	else if(tabId == "list-tab") {
-		onSetPostInfo()
-		if($("#postListTable tr").length == 1) {
-			requestPostList()
+		$("td[name=header-blog]").text( $("#blogList_select option:selected").val() );
+		if($("#ctgy_select option").length <= 0) {
+			requestCtgyList()
 		}
 	}
 	else if(tabId == "read-tab") {
-		onSetPostInfo()
+		;
 	}
 }
 
@@ -78,7 +80,7 @@ function isPossibleTab(tabId) {
 		if(selectedBlogName == "") {
 			return false;
 		}
-		else if(selectedPostId == -1) {
+		else if(selectedPostId == "") {
 			return false;
 		}
 		return true;

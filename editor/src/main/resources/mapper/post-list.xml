@@ -38,9 +38,8 @@
 	 WHERE 1=1
 	   AND CTGY_ID = #{categoryId}
 	</insert>
-	<select id="selectPostList" resultType="map">
-	/*selectPostList*/
-SELECT R1.* FROM (
+	<sql id="selectPostListMain">
+	/*selectPostListMain*/
 	SELECT
 		POST_UUID,
 		POST_ID,
@@ -55,8 +54,27 @@ SELECT R1.* FROM (
 	FROM  post_list
 	WHERE 1=1
 	AND BLOG_UUID = #{blog_uuid}
+	<if test='ctgy_uuid != "all"'>
+	AND find_in_set(CTGY_UUID, fn_ctgy_list(#{ctgy_uuid})) > 0
+	</if>
 	ORDER BY POST_DT DESC
+	</sql>
+	<select id="selectPostListAll" resultType="map">
+	/*selectPostListAll*/
+	<include refid="selectPostListMain"></include>
+	</select>
+	<select id="selectPostList" resultType="map">
+	/*selectPostList*/
+SELECT R1.* FROM (
+	<include refid="selectPostListMain"></include>
 ) R1
-LIMIT #{post_per_page, jdbcType=INTEGER} OFFSET #{selected_page, jdbcType=INTEGER}
+LIMIT #{post_per_page, jdbcType=INTEGER} OFFSET #{offset, jdbcType=INTEGER}
+	</select>
+	<select id="selectPostIdByUuid" resultType="map">
+	/*selectPostIdByUuid*/
+	SELECT POST_ID
+	FROM post_list
+	WHERE 1=1
+	AND POST_UUID = #{post_uuid}
 	</select>
 </mapper>

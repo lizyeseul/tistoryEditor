@@ -30,7 +30,12 @@ public class readController {
 	public @ResponseBody Map getBlogInfo(@RequestBody Map param) {
 		return readService.getBlogInfo(param);
 	}
-
+	
+	@RequestMapping(value = "getCtgyList.do", method = {RequestMethod.POST})
+	public @ResponseBody List getCtgyList(@RequestBody Map param) {
+		return readService.getCtgyList(param);
+	}
+	
 	@RequestMapping(value = "getPostList.do", method = {RequestMethod.POST})
 	public @ResponseBody Map getPostList(@RequestBody Map param) {
 		return readService.getPostList(param);

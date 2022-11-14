@@ -48,8 +48,7 @@ public class postReadApi implements tistoryApi {
 				return false;
 			}
 			else {
-				param.putAll(parameter);
-				
+				apiUtils.addParam(paramList, this.param, parameter);
 			}
 			responseBody = connect.getContent("GET", resource, apiUtils.makeUrlParam(param));
 			hasContent = parseContent();

@@ -29,4 +29,12 @@
 		#{entries}
 	)
 	</insert>
+	<select id="selectCtgyList" resultType="map">
+	/*selectCtgyList*/
+	SELECT
+		  CTGY_UUID
+		, CTGY_PATH
+	FROM  category_list
+	ORDER BY CTGY_PATH ASC
+	</select>
 </mapper>

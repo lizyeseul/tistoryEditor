@@ -81,14 +81,47 @@ function requestBlogInfo() {
 }
  
 /**
+카테고리 목록 조회
+@param {map} blog_uuid
+@returns {list} 카테고리 목록
+ */
+function requestCtgyList() {
+	var requestBody = {
+		blog_uuid : $("#selected-blog-uuid").val()
+	}
+	$.ajax({
+	    url : "/tistory/api/getCtgyList.do",
+	    async : false,
+	    type : "POST",
+	    dataType : "json",
+	    contentType: "application/json",
+	    data: JSON.stringify(requestBody)
+	})
+	.done(function(ctgyList) {
+		$("#ctgy_select").empty(); //블로그 목록 비우기
+		//select 옵션 정의
+		$("#ctgy_select").append("<option selected ctgy-uuid='all'>전체</option>")
+		for(ctgyIdx in ctgyList) {
+			var ctgyInfo = ctgyList[ctgyIdx];
+			$("#ctgy_select").append("<option ctgy-uuid="+ctgyInfo["CTGY_UUID"]+">"+ctgyInfo["CTGY_PATH"]+"</option>")
+		}
+		$("select").niceSelect("update");
+		if($("#postListTable tr").length == 1) {
+			requestPostList()
+		}
+	})
+}
+ 
+/**
 게시글 목록 조회
-@param {map} blog_uuid, post_uuid, 게시글 출력 개수
+@param {map} blog_uuid, ctgy_uuid, selected_page, 게시글 출력 개수=post_per_page
 @returns {list} 게시글 목록
  */
 function requestPostList() {
 	var selectedPage = $("#selected-page").val();
 	var postlistBody = {
 		blog_uuid : $("#selected-blog-uuid").val(),
+		ctgy_uuid : $("#ctgy_select option:selected").attr("ctgy-uuid"),
 		selected_page : Number(selectedPage),
 		post_per_page : 10
 	}
@@ -110,7 +143,7 @@ function requestPostList() {
 			$target.twbsPagination('destroy');
 			$target.twbsPagination($.extend({}, defaultPagingOpts, {
 				totalPages: data.totalPage,
-				startPage : selectedPage
+				startPage : Number(selectedPage)
 			}));
 		}
 	})
@@ -118,8 +151,8 @@ function requestPostList() {
 
 function requestPostDetail() {
 	var postdetailBody = {
-		blogName : $("#selected-blog-uuid").val(),
-		postId : $("#selected-post-uuid").val()
+		blog_uuid : $("#selected-blog-uuid").val(),
+		post_uuid : $("#selected-post-uuid").val()
 	}
 	$.ajax({
 	    url : "/tistory/api/getPostDetail.do",

@@ -77,4 +77,10 @@ LIMIT #{post_per_page, jdbcType=INTEGER} OFFSET #{offset, jdbcType=INTEGER}
 	WHERE 1=1
 	AND POST_UUID = #{post_uuid}
 	</select>
+	<select id="selectEditList" resultType="map">
+	/*selectEditList*/
+	select post_id
+	from post_list
+	where ctgy_uuid='0b77eea3-d534-4201-b2e6-eef2605ce8a2'
+	</select>
 </mapper>

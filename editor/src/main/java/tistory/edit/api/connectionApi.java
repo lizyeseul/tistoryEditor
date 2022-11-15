@@ -39,7 +39,7 @@ public class connectionApi {
 	public HttpURLConnection getConnection() {
 		HttpURLConnection conn = null;
 		try {
-//			log.info("\nurl   : "+this.serviceUrl+this.urlParam);
+			log.info("\nurl   : "+this.serviceUrl+this.urlParam);
 			URL url = new URL(this.serviceUrl+this.urlParam);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(this.requestType); // http 메서드

@@ -192,7 +192,8 @@ function requestPostDetail() {
 			alert("다시 조회하세요");
 		}
 		else {
-			$("#post-content-div").text(data.postContent);
+//			$("#post-content-div").text(data.postContent);
+			$("#post-content-div").html(data.postContent);
 		}
 	})
 }

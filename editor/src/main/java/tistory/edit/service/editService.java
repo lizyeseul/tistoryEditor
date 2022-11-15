@@ -3,6 +3,7 @@ package tistory.edit.service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.MapUtils;
@@ -35,13 +36,22 @@ public class editService {
 //		param.put("blogName", sqlSession.selectOne(NAMESPACE_BLOG+"selectBlogNm", param));
 //		param.put("postId", MapUtils.getString(sqlSession.selectOne(NAMESPACE_POST+"selectPostIdByUuid", param), "POST_ID", ""));
 		param.put("blogName", "hellorecord98");
-		param.put("postId", "60");
-		
-		postReadApi.setContent(param);
+		List<Map<String, Object>> postList = sqlSession.selectList(NAMESPACE_POST+"selectEditList");
+		Boolean valid = true;
+		for(Map p : postList) {
+			param.put("postId", MapUtils.getString(p, "post_id"));
+			valid = editPost(param);
+		}
+
+		response.put("response_result", (valid==true)?"S":"E");
+		return response;
+	}
+	private Boolean editPost(Map postparam) {
+		postReadApi.setContent(postparam);
 		
 		String content = postReadApi.getPostContent();
-		String before = MapUtils.getString(param,"before", "");
-		String after = MapUtils.getString(param,"after", "");
+		String before = MapUtils.getString(postparam,"before", "");
+		String after = MapUtils.getString(postparam,"after", "");
 
 		String result = content;
 		while(result.indexOf(before) > 0) {
@@ -49,18 +59,10 @@ public class editService {
 		}
 
 		JSONObject postParam = new JSONObject();
-		postParam.put("blogName", param.get("blogName"));
-		postParam.put("postId", param.get("postId"));
+		postParam.put("blogName", postparam.get("blogName"));
+		postParam.put("postId", postparam.get("postId"));
 		postParam.put("title", postReadApi.getTitle());
 		postParam.put("content", result);
-//		try {
-//			postParam.put("content", URLEncoder.encode(result, "UTF-8"));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		Boolean valid = postEditApi.setContentPOST(postParam);
-
-		response.put("response_result", (valid==true)?"S":"E");
-		return response;
+		return postEditApi.setContentPOST(postParam);
 	}
 }

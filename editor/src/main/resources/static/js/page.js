@@ -4,14 +4,14 @@
 ready
  */
 $(document).ready(function() {
-	$("#test-tab").trigger("click")
+//	$("#test-tab").trigger("click")
 	
 	
-//	$("select").niceSelect();
-//	$("#token-tab").trigger("click")
-////	$("#info-tab").trigger("click")
-////	$("#list-tab").trigger("click")
-//	onchangeDisabledTab();
+	$("select").niceSelect();
+	$("#token-tab").trigger("click")
+//	$("#info-tab").trigger("click")
+//	$("#list-tab").trigger("click")
+	onchangeDisabledTab();
 })
 
 /**

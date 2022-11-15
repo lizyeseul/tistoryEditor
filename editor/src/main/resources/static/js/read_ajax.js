@@ -1,3 +1,28 @@
+
+function requestEditTest() {
+	var requestBody = {
+		before : $("#before").val(),
+		after : $("#after").val()
+	}
+	$.ajax({
+	    url : "/tistory/api/requestEditTest.do",
+	    async : false,
+	    type : "POST",
+	    dataType : "json",
+	    contentType: "application/json",
+	    data: JSON.stringify(requestBody)
+	})
+	.done(function (data) {
+		if(data.response_result == "E") {
+			alert("실패");
+		}
+		else {
+			alert("성공");
+		}
+	})
+}
+
+
 /**
 탭별 DB api 실행
 @param {string} tabNm(info, list, read)

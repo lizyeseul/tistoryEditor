@@ -5,6 +5,9 @@
 
 <div class="tabs">
 	<div class="tab">
+		<label class="tab-label" id="test-tab">테스트</label>
+	</div>
+	<div class="tab">
 		<label class="tab-label" id="token-tab">토큰</label>
 	</div>
 	<div class="tab">
@@ -19,6 +22,9 @@
 </div>
 
 <div class="panels">
+	<div class="panel" id="test-panel" style=" height:100%;">
+		<#include "/test.ftl">
+	</div>
 	<div class="panel" id="token-panel">
 		<#include "/token/tokenInfo.ftl">
 	</div>

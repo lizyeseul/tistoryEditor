@@ -4,11 +4,14 @@
 ready
  */
 $(document).ready(function() {
-	$("select").niceSelect();
-	$("#token-tab").trigger("click")
-//	$("#info-tab").trigger("click")
-//	$("#list-tab").trigger("click")
-	onchangeDisabledTab();
+	$("#test-tab").trigger("click")
+	
+	
+//	$("select").niceSelect();
+//	$("#token-tab").trigger("click")
+////	$("#info-tab").trigger("click")
+////	$("#list-tab").trigger("click")
+//	onchangeDisabledTab();
 })
 
 /**
@@ -61,6 +64,9 @@ function onchangeDisabledTab() {
 
 //tab별 선택 가능 여부
 function isPossibleTab(tabId) {
+	if(tabId == "test-tab") {
+		return true;
+	}
 	var selectedBlogName = $("#selected-blog-uuid").val();
 	var selectedPostId = $("#selected-post-uuid").val();
 	

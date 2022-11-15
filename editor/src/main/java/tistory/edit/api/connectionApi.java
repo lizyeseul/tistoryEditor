@@ -39,7 +39,7 @@ public class connectionApi {
 	public HttpURLConnection getConnection() {
 		HttpURLConnection conn = null;
 		try {
-			log.info("\nurl   : "+this.serviceUrl+this.urlParam);
+//			log.info("\nurl   : "+this.serviceUrl+this.urlParam);
 			URL url = new URL(this.serviceUrl+this.urlParam);
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod(this.requestType); // http 메서드
@@ -53,6 +53,12 @@ public class connectionApi {
 	}
 	
 	public JSONObject getContent(String type, String api, String param) {
+		setApiConnection(type, api, param);
+		return send();
+	}
+	
+	public JSONObject setContent(String type, String api, String param, JSONObject body) {
+		this.body = body;
 		setApiConnection(type, api, param);
 		return send();
 	}
@@ -72,7 +78,7 @@ public class connectionApi {
 		try {
 			if("POST".equals(this.requestType)) {
 				bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-				bw.write(this.body.toString()); // 버퍼에 담기
+				bw.write(this.body.toJSONString()); // 버퍼에 담기
 				bw.flush(); // 버퍼에 담긴 데이터 전달
 				bw.close();
 			}
